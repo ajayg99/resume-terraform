@@ -1,16 +1,18 @@
 import boto3
+
+dynamodb = boto3.client('dynamodb')
+
 def lambda_handler(event, context):
-	dynamodb = boto3.resource('dynamodb')
-	table = dynamodb.Table('resume')
-	response = table.update_item(
-	Key={
-	'id': '1'
-	},
-	UpdateExpression='SET viewcount = viewcount + :val',
-	ExpressionAttributeValues={
-	':val': 1
-	},
-	ReturnValues='UPDATED_NEW'
-	)
-	views = response['Attributes']['viewcount']
-	return views
+    response = dynamodb.update_item(
+        TableName='resume',
+        Key={
+            'id': {'S': '1'}
+        },
+        UpdateExpression='SET viewcount = viewcount + :val',
+        ExpressionAttributeValues={
+            ':val': {'N': '1'}
+        },
+        ReturnValues='UPDATED_NEW'
+    )
+    views = response['Attributes']['viewcount']['N']
+    return views
